@@ -1,0 +1,43 @@
+{% include "partials/header.html" %}
+
+<body class="bg-gray-50 text-gray-800">
+  <!-- NAVIGATION -->
+  <nav class="flex items-center justify-between px-6 py-4 bg-white shadow-sm">
+    <div class="text-xl font-bold text-blue-600"><a href="care_landing.html" class="text-gray-600 hover:text-blue-600">CarePoint</a></div>
+    <div class="space-x-4">
+      <a href="/book" class="text-gray-600 hover:text-blue-600">Book appointment</a>
+      <a href="/login" class="text-gray-600 hover:text-blue-600">Login</a>
+      <a href="/reg" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Register</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="flex flex-col items-center justify-center text-center px-6 py-24">
+    <h1 class="text-4xl font-bold mb-4">Book Doctor Appointments, Simplified</h1>
+    <p class="text-gray-600 max-w-xl mb-8">
+      CarePoint helps patients find the right doctor, book appointments,
+      and manage their medical records — all in one place.
+    </p>
+    <div class="space-x-4">
+      <a href="/reg" class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700">Get Started</a>
+      <a href="/login" class="px-6 py-3 border border-gray-300 rounded-md hover:bg-gray-100">Login</a>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="grid grid-cols-1 md:grid-cols-3 gap-6 px-6 py-16 bg-white">
+    <div class="p-6 border rounded-md text-center">
+      <h3 class="font-semibold text-lg mb-2">Easy Booking</h3>
+      <p class="text-gray-600 text-sm">Choose a specialty, pick a doctor, and book a slot in minutes.</p>
+    </div>
+    <div class="p-6 border rounded-md text-center">
+      <h3 class="font-semibold text-lg mb-2">Doctor Profiles</h3>
+      <p class="text-gray-600 text-sm">View doctor specialties and availability before booking.</p>
+    </div>
+    <div class="p-6 border rounded-md text-center">
+      <h3 class="font-semibold text-lg mb-2">Manage Records</h3>
+      <p class="text-gray-600 text-sm">Access appointment history and documents anytime.</p>
+    </div>
+  </section>
+
+{% include "partials/footer.html" %}

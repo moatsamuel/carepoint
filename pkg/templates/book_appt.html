@@ -1,0 +1,81 @@
+{% include "partials/header.html" %}
+  <body class="bg-gray-50 text-gray-800">
+    <nav class="flex items-center justify-between bg-white px-6 py-4 shadow-sm">
+      <div class="text-xl font-bold text-blue-600">CarePoint</div>
+      <div class="flex items-center space-x-4">
+        <a href="care_page.html" class="text-gray-600 hover:text-blue-600">Login</a>
+        <a href="care_reg.html" class="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Register</a>
+      </div>
+    </nav>
+
+    <section class="px-6 py-24 text-center">
+      <h1 class="mb-4 text-4xl font-bold text-gray-900">Book Doctor Appointments, Simplified</h1>
+      <p class="mx-auto max-w-xl text-gray-600">
+        CarePoint helps patients find the right doctor, book appointments,
+        and manage their medical records — all in one place.
+      </p>
+      <div class="mt-8 flex justify-center space-x-4">
+        <a href="care_reg.html" class="rounded-md bg-blue-600 px-6 py-3 text-white hover:bg-blue-700">Get Started</a>
+        <a href="care_page.html" class="rounded-md border border-gray-300 px-6 py-3 text-gray-700 hover:bg-gray-100">Login</a>
+      </div>
+    </section>
+
+    <main class="mx-auto max-w-3xl px-6 pb-16">
+      <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div class="mb-6">
+          <h2 class="text-2xl font-bold text-gray-900">Schedule Your Appointment</h2>
+          <p class="mt-2 text-sm text-gray-600">Please select your preferred doctor, date, and time slot below.</p>
+        </div>
+
+        <form class="space-y-6">
+          <div>
+            <label for="doctor" class="mb-2 block text-sm font-semibold text-gray-700">1. Choose Doctor &amp; Specialty</label>
+            <select id="doctor" name="doctor" class="w-full rounded-md border border-gray-300 bg-gray-50 px-4 py-3 text-gray-800 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
+              <option value="">Select a practitioner...</option>
+              <option value="dr-jenkins">Dr. Balikis (General Medicine)</option>
+              <option value="dr-chen">Dr. Ifeanyi (Cardiology)</option>
+              <option value="dr-patel">Dr. Mofe (Pediatrics)</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="date" class="mb-2 block text-sm font-semibold text-gray-700">2. Select Preferred Date</label>
+            <input id="date" type="date" min="2026-09-16" name="appointmentDate" class="w-full rounded-md border border-gray-300 bg-gray-50 px-4 py-3 text-gray-800 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+          </div>
+
+          <div>
+            <label class="mb-2 block text-sm font-semibold text-gray-700">3. Available Time Slots</label>
+            <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              <button type="button" class="rounded-md border border-gray-300 bg-white px-3 py-3 text-sm font-medium text-gray-700 transition hover:border-blue-500 hover:text-blue-600">09:00 AM</button>
+              <button type="button" class="rounded-md border border-gray-300 bg-white px-3 py-3 text-sm font-medium text-gray-700 transition hover:border-blue-500 hover:text-blue-600">10:30 AM</button>
+              <button type="button" class="rounded-md border-2 border-blue-600 bg-blue-50 px-3 py-3 text-sm font-semibold text-blue-700">11:15 AM</button>
+              <button type="button" class="cursor-not-allowed rounded-md border border-gray-300 bg-gray-100 px-3 py-3 text-sm font-medium text-gray-400 line-through" disabled>01:00 PM</button>
+              <button type="button" class="rounded-md border border-gray-300 bg-white px-3 py-3 text-sm font-medium text-gray-700 transition hover:border-blue-500 hover:text-blue-600">02:30 PM</button>
+              <button type="button" class="rounded-md border border-gray-300 bg-white px-3 py-3 text-sm font-medium text-gray-700 transition hover:border-blue-500 hover:text-blue-600">04:00 PM</button>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-3 border-t border-gray-200 pt-5 sm:flex-row sm:justify-end">
+            <button type="button" class="rounded-md px-4 py-3 text-sm font-semibold text-gray-600 transition hover:bg-gray-100">Cancel</button>
+            <button type="submit" class="rounded-md bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700">Confirm Appointment</button>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <section class="grid grid-cols-1 gap-6 bg-white px-6 py-16 md:grid-cols-3">
+      <div class="rounded-md border border-gray-200 p-6 text-center">
+        <h3 class="mb-2 text-lg font-semibold text-gray-900">Easy Booking</h3>
+        <p class="text-sm text-gray-600">Choose a specialty, pick a doctor, and book a slot in minutes.</p>
+      </div>
+      <div class="rounded-md border border-gray-200 p-6 text-center">
+        <h3 class="mb-2 text-lg font-semibold text-gray-900">Doctor Profiles</h3>
+        <p class="text-sm text-gray-600">View doctor specialties and availability before booking.</p>
+      </div>
+      <div class="rounded-md border border-gray-200 p-6 text-center">
+        <h3 class="mb-2 text-lg font-semibold text-gray-900">Manage Records</h3>
+        <p class="text-sm text-gray-600">Access appointment history and documents anytime.</p>
+      </div>
+    </section>
+
+{% include "partials/footer.html" %}
