@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ 'Edit' if doctor else 'Add' }} Doctor - CarePoint</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-700 p-6">
+
+    <h1 class="text-2xl font-bold mb-4">{{ 'Edit' if doctor else 'Add' }} Doctor</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="mb-4 p-3 rounded-md {{ 'bg-green-100 text-green-700' if category == 'success' else 'bg-red-100 text-red-700' }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" class="bg-white p-6 rounded-lg shadow-sm max-w-md space-y-4">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div>
+            <label class="block text-sm mb-1">First Name</label>
+            <input type="text" name="first_name" value="{{ doctor.first_name if doctor else '' }}"
+                   class="w-full border rounded-md p-2" required>
+        </div>
+
+        <div>
+            <label class="block text-sm mb-1">Last Name</label>
+            <input type="text" name="last_name" value="{{ doctor.last_name if doctor else '' }}"
+                   class="w-full border rounded-md p-2" required>
+        </div>
+
+        <div>
+            <label class="block text-sm mb-1">Email</label>
+            <input type="email" name="email" value="{{ doctor.email if doctor else '' }}"
+                   class="w-full border rounded-md p-2" required>
+        </div>
+
+        <div>
+            <label class="block text-sm mb-1">Specialty</label>
+            <select name="specialty_id" class="w-full border rounded-md p-2" required>
+                <option value="">Select specialty</option>
+                {% for specialty in specialties %}
+                <option value="{{ specialty.id }}"
+                    {{ 'selected' if doctor and doctor.specialty_id == specialty.id else '' }}>
+                    {{ specialty.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm mb-1">Gender</label>
+            <select name="gender" class="w-full border rounded-md p-2" required>
+                <option value="M" {{ 'selected' if doctor and doctor.gender == 'M' else '' }}>Male</option>
+                <option value="F" {{ 'selected' if doctor and doctor.gender == 'F' else '' }}>Female</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm mb-1">License Number</label>
+            <input type="text" name="licence_no" value="{{ doctor.licence_no if doctor else '' }}"
+                   class="w-full border rounded-md p-2" required>
+        </div>
+
+        <div class="flex items-center space-x-2">
+            <input type="checkbox" name="availability" id="availability"
+                   {{ 'checked' if (doctor and doctor.availability) or not doctor else '' }}>
+            <label for="availability" class="text-sm">Available</label>
+        </div>
+
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">
+            {{ 'Update' if doctor else 'Create' }} Doctor
+        </button>
+    </form>
+
+</body>
+</html>
