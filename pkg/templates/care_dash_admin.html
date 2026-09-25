@@ -13,8 +13,8 @@
             <div class="p-6 text-xl font-bold text-blue-600 border-b">CarePoint</div>
             <nav class="p-4 space-y-2">
   <a href="#" class="block px-4 py-2 rounded-md bg-blue-50 text-blue-600 font-medium">Dashboard</a>
-  <a href="#" class="block px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100">Manage Doctors</a>
-  <a href="#" class="block px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100">Manage Specialties</a>
+  <a href="/admin/doctors/add" class="block px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100">Manage Doctors</a>
+  <a href="#" class="block px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100">Edit Doctors</a>
   <a href="#" class="block px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100">All Appointments</a>
   <a href="#" class="block px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100">Logout</a>
 </nav>
@@ -25,7 +25,7 @@
   <p class="text-gray-600">Here's an overview of the clinic system.</p>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
 
   <div class="bg-white rounded-lg shadow-sm p-6">
     <p class="text-sm text-gray-500">Total Patients</p>
@@ -34,7 +34,7 @@
 
   <div class="bg-white rounded-lg shadow-sm p-6">
     <p class="text-sm text-gray-500">Total Doctors</p>
-    <p class="text-3xl font-bold mt-2">18</p>
+    <p class="text-3xl font-bold mt-2">{{ doctors|length }}</p>
   </div>
 
   <div class="bg-white rounded-lg shadow-sm p-6">
@@ -43,5 +43,47 @@
   </div>
 
 </div>
+
+<div class="bg-white rounded-lg shadow-sm p-6">
+  <h2 class="text-lg font-bold text-gray-800 mb-4">Doctors</h2>
+  <table class="w-full text-left">
+    <thead>
+      <tr class="border-b text-sm text-gray-500">
+        <th class="py-2">Name</th>
+        <th class="py-2">Specialty</th>
+        <th class="py-2">License No.</th>
+        <th class="py-2">Availability</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for doctor in doctors %}
+      <tr class="border-b text-sm">
+        <td class="py-2 text-gray-800">Dr. {{ doctor.first_name }} {{ doctor.last_name }}</td>
+        <td class="py-2">{{ doctor.specialty.name }}</td>
+        <td class="py-2">{{ doctor.licence_no }}</td>
+        <td class="py-2">
+          {% if doctor.availability %}
+            <span class="text-green-600 font-medium">Available</span>
+          {% else %}
+            <span class="text-red-600 font-medium">Unavailable</span>
+          {% endif %}
+        </td>
+      </tr>
+       <td class="py-2 space-x-2">
+          <a href="{{ url_for('edit_doctor', doctor_id=doctor.id) }}" class="text-blue-600">Edit</a>
+          <form action="{{ url_for('delete_doctor', doctor_id=doctor.id) }}" method="POST" class="inline"
+                onsubmit="return confirm('Delete Dr. {{ doctor.first_name }} {{ doctor.last_name }}?');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="text-red-600">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+</main>
+    </div>
 </body>
 </html>
