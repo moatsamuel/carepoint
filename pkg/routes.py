@@ -56,7 +56,7 @@ def seed():
             db.session.add(Doctor(
                 first_name=first, last_name=last, email=email,
                 specialty=specialties[specialty_name],
-                gender=gender, licence_no=licence_no, availabilty=True,
+                gender=gender, licence_no=licence_no, availability=True,
             ))
 
     db.session.commit()
@@ -124,7 +124,7 @@ def add_doctor():
             specialty_id=specialty_id,
             gender=gender,
             licence_no=licence_no,
-            availabilty=availability,
+            availability=availability,
         )
         db.session.add(new_doctor)
         db.session.commit()
