@@ -4,6 +4,16 @@ from pkg.models import Specialty, Doctor
 from pkg.ADMIN import admin_bp
 
 
+from flask import session, redirect, url_for, flash, abort
+
+@admin_bp.before_request
+def admin_only():
+    if 'user_id' not in session:
+        flash('Please log in to continue.', 'error')
+        return redirect(url_for('auth.login'))
+    if session.get('role') != 'ADMINISTRATOR':
+        abort(403)
+
 @admin_bp.route('/')
 def dashboard():
     specialty_id = request.args.get('specialty_id', type=int)

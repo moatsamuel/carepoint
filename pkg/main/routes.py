@@ -2,6 +2,7 @@ from flask import render_template
 from pkg import db
 from pkg.models import Specialty, Doctor
 from pkg.main import main_bp
+from pkg.decorators import role_required
 
 @main_bp.route('/')
 def landing():
@@ -10,6 +11,7 @@ def landing():
 
 
 @main_bp.route('/seed')
+@role_required('ADMINISTRATOR')
 def seed():
     specialty_names = [
         "Cardiology", "Dermatology", "Paediatrics",
