@@ -16,11 +16,17 @@ def create_app():
     migrate.init_app(app, db)
     csrf.init_app(app)
 
-    with app.app_context():
-        from pkg import routes
-        from pkg import models
+    from pkg import models
 
+    from pkg.main import main_bp
+    from pkg.AUTH import auth_bp
+    from pkg.PATIENT import patient_bp
+    from pkg.ADMIN import admin_bp
 
-    
+    app.register_blueprint(main_bp)
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(patient_bp)
+    app.register_blueprint(admin_bp)
+
     return app
 
