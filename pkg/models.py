@@ -26,6 +26,8 @@ class Doctor(db.Model):
     licence_no = db.Column(db.String(50), unique=True, nullable=False)
     consultation_fee = db.Column(db.Numeric(10, 2), nullable=False, default=0.00)   # <-- NEW
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), unique=True, nullable=True)
+    user = db.relationship("User", backref=db.backref("doctor", uselist=False))
 
 
 
