@@ -78,6 +78,7 @@ class Patient(db.Model):
     first_name = db.Column(db.String(200), nullable=False)
     last_name = db.Column(db.String(200), nullable=False)
     phone = db.Column(db.String(20))
+    date_of_birth = db.Column(db.Date, nullable=True)      # <-- new
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     user = db.relationship("User", backref=db.backref("patient", uselist=False))

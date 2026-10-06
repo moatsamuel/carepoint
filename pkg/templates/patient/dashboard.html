@@ -15,7 +15,10 @@
                 <a href="#" class="block px-4 py-2 rounded-md bg-blue-50 text-blue-600 font-medium">Dashboard</a>
                 <a href="#" class="block px-4 py-2 rounded-md bg-blue-50 text-gray-600 hover:bg-gray-100">Appointment</a>
                 <a href="#" class="block px-4 py-2 rounded-md bg-blue-50 text-gray-600 hover:bg-gray-100">Profile</a>
-                <a href="#" class="block px-4 py-2 rounded-md bg-blue-50 text-gray-600 hover:bg-gray-100">LogOut</a>
+                <form method="POST" action="{{ url_for('auth.logout') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button type="submit">Logout</button>
+</form>
             </nav>
         </aside>
         <main class="flex-1 p-6">
