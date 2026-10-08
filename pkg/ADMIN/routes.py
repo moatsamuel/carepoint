@@ -1,6 +1,6 @@
 from flask import render_template, redirect, request, flash, url_for
 from pkg import db
-from pkg.models import Specialty, Doctor
+from pkg.models import Specialty, Doctor, User
 from pkg.ADMIN import admin_bp
 
 
@@ -43,30 +43,39 @@ def dashboard():
         search=search
     )
 
-
 @admin_bp.route('/doctors/add', methods=['GET', 'POST'])
 def add_doctor():
     specialties = Specialty.query.all()
 
     if request.method == 'POST':
-        first_name = request.form.get('first_name')
-        last_name = request.form.get('last_name')
-        email = request.form.get('email')
+        first_name = request.form.get('first_name', '').strip()
+        last_name = request.form.get('last_name', '').strip()
+        email = request.form.get('email', '').strip().lower()
         specialty_id = request.form.get('specialty_id')
         gender = request.form.get('gender')
-        licence_no = request.form.get('licence_no')
+        licence_no = request.form.get('licence_no', '').strip()
+        password = request.form.get('password', '')
         availability = True if request.form.get('availability') == 'on' else False
 
-        if not all([first_name, last_name, email, specialty_id, gender, licence_no]):
+        if not all([first_name, last_name, email, specialty_id, gender, licence_no, password]):
             flash('Invalid information submitted.', 'error')
             return redirect(url_for('admin.add_doctor'))
 
-        existing = Doctor.query.filter_by(email=email).first()
-        if existing:
-            flash('A doctor with this email already exists.', 'error')
+        if len(password) < 8:
+            flash('Password must be at least 8 characters.', 'error')
             return redirect(url_for('admin.add_doctor'))
 
+        if Doctor.query.filter_by(email=email).first() or User.query.filter_by(email=email).first():
+            flash('An account with this email already exists.', 'error')
+            return redirect(url_for('admin.add_doctor'))
+
+        user = User(email=email, role='DOCTOR')
+        user.set_password(password)
+        db.session.add(user)
+        db.session.flush()
+
         new_doctor = Doctor(
+            user_id=user.id,
             first_name=first_name,
             last_name=last_name,
             email=email,
@@ -94,16 +103,27 @@ def edit_doctor(doctor_id):
         return redirect(url_for('admin.dashboard'))
 
     if request.method == 'POST':
-        first_name = request.form.get('first_name')
-        last_name = request.form.get('last_name')
-        email = request.form.get('email')
+        first_name = request.form.get('first_name', '').strip()
+        last_name = request.form.get('last_name', '').strip()
+        email = request.form.get('email', '').strip().lower()
         specialty_id = request.form.get('specialty_id')
         gender = request.form.get('gender')
-        licence_no = request.form.get('licence_no')
+        licence_no = request.form.get('licence_no', '').strip()
+        password = request.form.get('password', '')
         availability = True if request.form.get('availability') == 'on' else False
 
         if not all([first_name, last_name, email, specialty_id, gender, licence_no]):
             flash('Invalid information submitted.', 'error')
+            return redirect(url_for('admin.edit_doctor', doctor_id=doctor.id))
+
+        if password and len(password) < 8:
+            flash('Password must be at least 8 characters.', 'error')
+            return redirect(url_for('admin.edit_doctor', doctor_id=doctor.id))
+
+        doctor_clash = Doctor.query.filter(Doctor.email == email, Doctor.id != doctor.id).first()
+        user_clash = User.query.filter(User.email == email, User.id != (doctor.user_id or 0)).first()
+        if doctor_clash or user_clash:
+            flash('Another account already uses this email.', 'error')
             return redirect(url_for('admin.edit_doctor', doctor_id=doctor.id))
 
         doctor.first_name = first_name
@@ -113,6 +133,17 @@ def edit_doctor(doctor_id):
         doctor.gender = gender
         doctor.licence_no = licence_no
         doctor.availability = availability
+
+        if doctor.user:
+            doctor.user.email = email
+            if password:
+                doctor.user.set_password(password)
+        elif password:
+            user = User(email=email, role='DOCTOR')
+            user.set_password(password)
+            db.session.add(user)
+            db.session.flush()
+            doctor.user_id = user.id
 
         db.session.commit()
 
@@ -130,7 +161,12 @@ def delete_doctor(doctor_id):
         flash('Doctor not found.', 'error')
         return redirect(url_for('admin.dashboard'))
 
+    user = doctor.user
+
     db.session.delete(doctor)
+    
+    if user:
+        db.session.delete(user)
     db.session.commit()
 
     flash('Doctor deleted successfully.', 'success')

@@ -67,9 +67,17 @@
                    class="w-full border rounded-md p-2" required>
         </div>
 
+        <div>
+            <label class="block text-sm mb-1">
+                {{ 'New login password (leave blank to keep current)' if doctor else 'Temporary login password' }}
+            </label>
+            <input type="password" name="password" minlength="8" autocomplete="new-password"
+                   class="w-full border rounded-md p-2" {{ '' if doctor else 'required' }}>
+        </div>
         <div class="flex items-center space-x-2">
             <input type="checkbox" name="availability" id="availability"
                    {{ 'checked' if (doctor and doctor.availability) or not doctor else '' }}>
+                   
             <label for="availability" class="text-sm">Available</label>
         </div>
 

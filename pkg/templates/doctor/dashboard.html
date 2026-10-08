@@ -3,50 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctor's Dashboard</title>
+    <title>Dashboard - Doctor</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 text-gray-500">
-
-    
     <div class="flex min-h-screen">
         <aside class="w-64 bg-white shadow-md">
             <div class="p-6 text-xl font-bold text-blue-600 border-b">CarePoint</div>
-           <nav class="p-4 space-y-2">
-                <a href="#" class="block px-4 py-2 rounded-md bg-blue-50 text-blue-600 font-medium">Dashboard</a>
-                <a href="#" class="block px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100">My Schedule</a>
-                <a href="#" class="block px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100">Patients</a>
-                <a href="#" class="block px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100">Profile</a>
-                <a href="#" class="block px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100">Logout</a>
+            <nav class="p-4 space-y-2">
+                <a href="{{ url_for('doctor.dashboard') }}" class="block px-4 py-2 rounded-md bg-blue-50 text-blue-600 font-medium">Dashboard</a>
+                <form method="POST" action="{{ url_for('auth.logout') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="block w-full text-left px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100">Logout</button>
+                </form>
             </nav>
         </aside>
 
-
-        
         <main class="flex-1 p-6">
-            <div class="mb-6">
-                <h1 class="text-2xl font-bold">Welcome back, Dr. [Name]</h1>
-                <p class="text-gray-600">Here's your schedule overview for today.</p>
+            <h1 class="text-2xl font-bold mb-1">Welcome, Dr. {{ doctor.last_name }}</h1>
+            <p class="text-gray-600 mb-6">{{ doctor.specialty.name }}</p>
+
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">My Appointments</h2>
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b text-sm text-gray-500">
+                            <th class="py-2">Date</th>
+                            <th class="py-2">Time</th>
+                            <th class="py-2">Patient</th>
+                            <th class="py-2">Reason</th>
+                            <th class="py-2">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for a in appointments %}
+                        <tr class="border-b text-sm">
+                            <td class="py-2">{{ a.appointment_date }}</td>
+                            <td class="py-2">{{ a.appointment_time }}</td>
+                            <td class="py-2">
+                                {% if a.patient %}{{ a.patient.first_name }} {{ a.patient.last_name }}{% else %}-{% endif %}
+                            </td>
+                            <td class="py-2">{{ a.reason or '-' }}</td>
+                            <td class="py-2">{{ a.status }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="py-4 text-center text-gray-500">No appointments yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-         <div class="bg-white rounded-lg shadow-sm p-6">
-            <p class="text-sm text-gray-500">Today's Appointments</p>
-            <p class="text-3xl font-bold mt-2">6</p>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-sm p-6">
-            <p class="text-sm text-gray-500">Total Patients Seen</p>
-            <p class="text-3xl font-bold mt-2">148</p>
-        </div>
-
-  <div class="bg-white rounded-lg shadow-sm p-6">
-    <p class="text-sm text-gray-500">Pending Requests</p>
-    <p class="text-3xl font-bold mt-2">4</p>
-  </div>
-
-</div>
-    
+        </main>
+    </div>
 </body>
 </html>
