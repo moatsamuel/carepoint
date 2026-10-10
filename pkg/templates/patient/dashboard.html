@@ -3,50 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - CarePoint</title>
+    <title>Dashboard - Patient</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 text-gray-800">
+
+    {% set upcoming = appointments | selectattr('status', 'in', ['Pending', 'Accepted']) | list %}
+    {% set completed = appointments | selectattr('status', 'equalto', 'Completed') | list %}
+    {% set pending = appointments | selectattr('status', 'equalto', 'Pending') | list %}
 
     <div class="flex min-h-screen">
         <aside class="w-64 bg-white shadow-md">
             <div class="p-6 text-xl font-bold text-blue-600 border-b">CarePoint</div>
             <nav class="p-4 space-y-2">
-                <a href="#" class="block px-4 py-2 rounded-md bg-blue-50 text-blue-600 font-medium">Dashboard</a>
-                <a href="#" class="block px-4 py-2 rounded-md bg-blue-50 text-gray-600 hover:bg-gray-100">Appointment</a>
-                <a href="#" class="block px-4 py-2 rounded-md bg-blue-50 text-gray-600 hover:bg-gray-100">Profile</a>
+                <a href="{{ url_for('patient.dashboard') }}" class="block px-4 py-2 rounded-md bg-blue-50 text-blue-600 font-medium">Dashboard</a>
+                <a href="{{ url_for('patient.book') }}" class="block px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100">Book Appointment</a>
+                <a href="#" class="block px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100">Profile</a>
+
                 <form method="POST" action="{{ url_for('auth.logout') }}">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <button type="submit">Logout</button>
-</form>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="block w-full text-left px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100">Logout</button>
+                </form>
             </nav>
         </aside>
+
         <main class="flex-1 p-6">
             <div class="mb-6">
-  <h1 class="text-2xl font-bold">Welcome back, [User]</h1>
-  <p class="text-gray-600">Here's what's happening with your appointments.</p>
-</div>
+                <h1 class="text-2xl font-bold text-gray-900">Welcome back, {{ patient.first_name }}</h1>
+                <p class="text-gray-600">Here's what's happening with your appointments.</p>
+            </div>
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% for category, message in messages %}
+                    <div class="mb-4 p-3 rounded-md text-sm {{ 'bg-green-100 text-green-700' if category == 'success' else 'bg-red-100 text-red-700' }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endwith %}
 
-  <div class="bg-white rounded-lg shadow-sm p-6">
-    <p class="text-sm text-gray-500">Upcoming Appointments</p>
-    <p class="text-3xl font-bold mt-2">3</p>
-  </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <p class="text-sm text-gray-500">Upcoming Appointments</p>
+                    <p class="text-3xl font-bold mt-2">{{ upcoming | length }}</p>
+                </div>
 
-  <div class="bg-white rounded-lg shadow-sm p-6">
-    <p class="text-sm text-gray-500">Completed Appointments</p>
-    <p class="text-3xl font-bold mt-2">12</p>
-  </div>
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <p class="text-sm text-gray-500">Completed Appointments</p>
+                    <p class="text-3xl font-bold mt-2">{{ completed | length }}</p>
+                </div>
 
-  <div class="bg-white rounded-lg shadow-sm p-6">
-    <p class="text-sm text-gray-500">Documents</p>
-    <p class="text-3xl font-bold mt-2">5</p>
-  </div>
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <p class="text-sm text-gray-500">Awaiting Confirmation</p>
+                    <p class="text-3xl font-bold mt-2">{{ pending | length }}</p>
+                </div>
+            </div>
 
-</div>
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-bold text-gray-800">My Appointments</h2>
+                    <a href="{{ url_for('patient.book') }}" class="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700">Book an appointment</a>
+                </div>
+
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b text-sm text-gray-500">
+                            <th class="py-2">Date</th>
+                            <th class="py-2">Time</th>
+                            <th class="py-2">Doctor</th>
+                            <th class="py-2">Reason</th>
+                            <th class="py-2">Status</th>
+                            <th class="py-2">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for a in appointments %}
+                        <tr class="border-b text-sm">
+                            <td class="py-2">{{ a.appointment_date.strftime('%d %b %Y') }}</td>
+                            <td class="py-2">{{ a.appointment_time.strftime('%I:%M %p') }}</td>
+                            <td class="py-2 text-gray-800">Dr. {{ a.doctor.first_name }} {{ a.doctor.last_name }}</td>
+                            <td class="py-2">{{ a.reason or '-' }}</td>
+                            <td class="py-2">
+                                {% if a.status == 'Accepted' %}
+                                    <span class="text-green-600 font-medium">Accepted</span>
+                                {% elif a.status == 'Pending' %}
+                                    <span class="text-yellow-600 font-medium">Pending</span>
+                                {% elif a.status in ['Rejected', 'Cancelled'] %}
+                                    <span class="text-red-600 font-medium">{{ a.status }}</span>
+                                {% else %}
+                                    <span class="text-gray-600 font-medium">{{ a.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-2">
+                                {% if a.status in ['Pending', 'Accepted'] %}
+                                <form method="POST" action="{{ url_for('patient.cancel_appointment', appointment_id=a.id) }}"
+                                      onsubmit="return confirm('Cancel this appointment?');">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="text-red-600">Cancel</button>
+                                </form>
+                                {% else %}
+                                <span class="text-gray-400">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="py-4 text-center text-gray-500">No appointments yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </main>
     </div>
-    
 </body>
 </html>
